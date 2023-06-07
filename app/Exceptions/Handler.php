@@ -27,4 +27,50 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    protected function invalidJson($request, $exception)
+    {
+        $errors = [];
+
+        // foreach($exception->errors() as $field => $messages) {
+        //     $pointer = '/'.str_replace('.', '/', $field);
+
+        //     $errors = [
+        //         [
+        //             'title' => 'The given data was invalid',
+        //             'detail' => $messages[0],
+        //             'source' => [
+        //                 'pointer' => $pointer,
+        //             ]
+        //         ]
+        //     ];
+        // }
+
+        // $errors = collect($exception->errors())
+        //     ->map(function($messages, $field){
+        //         return [
+        //             'title' => 'The given data was invalid',
+        //             'detail' => $messages[0],
+        //             'source' => [
+        //                 'pointer' => '/'.str_replace('.', '/', $field),
+        //             ]
+        //         ];
+        //     })->values();
+
+        // dd($errors);
+        // $title = $exception->getMessage();
+
+        return response()->json([
+            'errors' => collect($exception->errors())
+                ->map(function($messages, $field){
+                    return [
+                        'title' => 'The given data was invalid',
+                        'detail' => $messages[0],
+                        'source' => [
+                            'pointer' => '/'.str_replace('.', '/', $field),
+                        ]
+                    ];
+                })->values()
+        ], 422);
+    }
 }
