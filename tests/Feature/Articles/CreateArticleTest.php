@@ -2,14 +2,22 @@
 
 namespace Tests\Feature\Articles;
 
-use App\Models\Article;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\Models\Article;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CreateArticleTest extends TestCase
 {
     use RefreshDatabase;
+
+    // protected function setUp(): void
+    // {
+    //     parent::setUp();
+
+
+    // }
+
     /**
      * @test
      */
@@ -17,7 +25,7 @@ class CreateArticleTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $response = $this->postJson(route('api.v1.articles.create'), [
+        $response = $this->postJson(route('api.v1.articles.store'), [
             'data' => [
                 'type' => 'articles',
                 'attributes' => [
@@ -57,28 +65,29 @@ class CreateArticleTest extends TestCase
     {
         // $this->withoutExceptionHandling();
 
-        $response = $this->postJson(route('api.v1.articles.create'), [
+        $response = $this->postJson(route('api.v1.articles.store'), [
             'data' => [
                 'type' => 'articles',
                 'attributes' => [
-                    // 'title' => 'Ne',
+                    // 'title' => 'New article',
                     'slug' => 'new-article',
                     'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
                 ],
             ],
         ])->dump();
 
-        $response->assertJsonStructure([
-            'errors' => [
-                ['title', 'detail', 'source' => ['pointer']]
-            ]
-         ])->assertJsonFragment([
-            'source' => ['pointer' => '/data/attributes/title'],
-         ])->assertHeader(
-            'content-type', 'application/vnd.api+json'
-        )->assertStatus(422);
+        // $response->assertJsonStructure([
+        //     'errors' => [
+        //         ['title', 'detail', 'source' => ['pointer']]
+        //     ]
+        //  ])->assertJsonFragment([
+        //     'source' => ['pointer' => '/data/attributes/title'],
+        //  ])->assertHeader(
+        //     'content-type', 'application/vnd.api+json'
+        // )->assertStatus(422);
 
         // $response->assertJsonValidationErrors('data.attributes.title');
+        $response->assertJsonApiValidationErrors('title');
     }
 
     /**
@@ -88,7 +97,7 @@ class CreateArticleTest extends TestCase
     {
         // $this->withoutExceptionHandling();
 
-        $response = $this->postJson(route('api.v1.articles.create'), [
+        $response = $this->postJson(route('api.v1.articles.store'), [
             'data' => [
                 'type' => 'articles',
                 'attributes' => [
@@ -99,7 +108,7 @@ class CreateArticleTest extends TestCase
             ],
         ]);
 
-        $response->assertJsonValidationErrors('data.attributes.slug');
+        $response->assertJsonApiValidationErrors('slug');
     }
 
     /**
@@ -109,7 +118,7 @@ class CreateArticleTest extends TestCase
     {
         // $this->withoutExceptionHandling();
 
-        $response = $this->postJson(route('api.v1.articles.create'), [
+        $response = $this->postJson(route('api.v1.articles.store'), [
             'data' => [
                 'type' => 'articles',
                 'attributes' => [
@@ -120,7 +129,7 @@ class CreateArticleTest extends TestCase
             ],
         ]);
 
-        $response->assertJsonValidationErrors('data.attributes.content');
+        $response->assertJsonApiValidationErrors('content');
     }
 
      /**
@@ -130,7 +139,7 @@ class CreateArticleTest extends TestCase
     {
         // $this->withoutExceptionHandling();
 
-        $response = $this->postJson(route('api.v1.articles.create'), [
+        $response = $this->postJson(route('api.v1.articles.store'), [
             'data' => [
                 'type' => 'articles',
                 'attributes' => [
@@ -141,6 +150,6 @@ class CreateArticleTest extends TestCase
             ],
         ]);
 
-        $response->assertJsonValidationErrors('data.attributes.title');
+        $response->assertJsonApiValidationErrors('title');
     }
 }
