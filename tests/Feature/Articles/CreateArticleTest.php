@@ -80,7 +80,7 @@ class CreateArticleTest extends TestCase
         //     'errors' => [
         //         ['title', 'detail', 'source' => ['pointer']]
         //     ]
-        //  ])->assertJsonFragment([
+        //  ])->assertJson nt([
         //     'source' => ['pointer' => '/data/attributes/title'],
         //  ])->assertHeader(
         //     'content-type', 'application/vnd.api+json'

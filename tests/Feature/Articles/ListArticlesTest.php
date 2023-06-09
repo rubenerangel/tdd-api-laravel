@@ -27,7 +27,7 @@ class ListArticlesTest extends TestCase
         $response->assertExactJson([
             'data' => [
                 'type' => 'articles',
-                'id' => (string) $article->getRouteKey(),
+                'id' => (string)$article->getRouteKey(),
                 'attributes' => [
                     'title' => $article->title,
                     'slug' => $article->slug,

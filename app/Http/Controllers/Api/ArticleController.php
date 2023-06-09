@@ -12,9 +12,9 @@ class ArticleController extends Controller
 {
     public function index(): ArticleCollection
     {
-        $articles = Article::all();
+        // $articles = Article::all();
 
-        return ArticleCollection::make($articles);
+        return ArticleCollection::make(Article::all());
     }
 
     public function show(Article $article): ArticleResource

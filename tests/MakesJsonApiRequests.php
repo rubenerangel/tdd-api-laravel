@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Closure;
+use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Assert as PHPUnit;
 use PHPUnit\Framework\ExpectationFailedException;
@@ -44,9 +45,14 @@ trait MakesJsonApiRequests
     {
         return function ($attribute) {
             /** @var TestResponse $this */
+            $pointer = Str::of($attribute)->startWith('data')
+                ? "/{$attribute}" // This starts with data?
+                : "/data/attributes/{$attribute}";
+
             try {
                 $this->assertJsonFragment([
-                    'source' => ['pointer' => "/data/attributes/{$attribute}"],
+                    // 'source' => ['pointer' => "/data/attributes/{$attribute}"],
+                    'source' => ['pointer' => $pointer],
                 ]);
             } catch (ExpectationFailedException $th) {
                 // dd($th->getMessage());
@@ -67,8 +73,6 @@ trait MakesJsonApiRequests
                     .PHP_EOL.PHP_EOL.$th->getMessage()
                 );
             }
-
-
 
             $this->assertHeader(
                 'content-type', 'application/vnd.api+json'
