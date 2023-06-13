@@ -2,8 +2,10 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Http\JsonResponse;
+use App\Http\Responses\JsonApiValidationErrorResponse;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
 {
@@ -28,9 +30,10 @@ class Handler extends ExceptionHandler
         });
     }
 
-    protected function invalidJson($request, $exception)
+    protected function invalidJson($request, $exception): JsonApiValidationErrorResponse
     {
-        $errors = [];
+        return new JsonApiValidationErrorResponse($exception, 422);
+        // $errors = [];
 
         // foreach($exception->errors() as $field => $messages) {
         //     $pointer = '/'.str_replace('.', '/', $field);
@@ -60,17 +63,22 @@ class Handler extends ExceptionHandler
         // dd($errors);
         // $title = $exception->getMessage();
 
-        return response()->json([
-            'errors' => collect($exception->errors())
-                ->map(function($messages, $field){
-                    return [
-                        'title' => 'The given data was invalid',
-                        'detail' => $messages[0],
-                        'source' => [
-                            'pointer' => '/'.str_replace('.', '/', $field),
-                        ]
-                    ];
-                })->values()
-        ], 422);
+        // return response()->json([
+        // return new JsonResponse([
+        //     'errors' => collect($exception->errors())
+        //         ->map(function($messages, $field){
+        //             return [
+        //                 'title' => 'The given data was invalid',
+        //                 'detail' => $messages[0],
+        //                 'source' => [
+        //                     'pointer' => '/'.str_replace('.', '/', $field),
+        //                 ]
+        //             ];
+        //         })->values()
+        // ],
+        // 422,
+        // [
+        //     'content-type' => 'application/vnd.api+json',
+        // ]);
     }
 }

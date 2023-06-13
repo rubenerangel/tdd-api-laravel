@@ -10,6 +10,8 @@ use PHPUnit\Framework\ExpectationFailedException;
 
 trait MakesJsonApiRequests
 {
+    protected bool $formatJsonApiDocument = true;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -20,11 +22,27 @@ trait MakesJsonApiRequests
         );
     }
 
+    public function withoutJsonApiDocumentFormatting()
+    {
+        $this->formatJsonApiDocument = false;
+    }
+
     public function json($method, $uri, array $data = [], array $headers = [], $options = 0): TestResponse
     {
         $headers['accept'] = 'application/vnd.api+json';
 
-        return parent::json($method, $uri, $data, $headers, $options);
+        // $formattedData['data'] = $data;
+        // Recived only the attributes that are needed to make the request
+
+        if ($this->formatJsonApiDocument) {
+            $formattedData['data']['attributes'] = $data;
+            $formattedData['data']['type'] = (string)Str::of($uri)->after('api/v1/');
+        }
+        // dd(Str::of($uri)->after('api/v1/'));
+        // dd($formattedData);
+
+        // return parent::json($method, $uri, $data, $headers, $options);
+        return parent::json($method, $uri, $formattedData ?? $data, $headers, $options);
     }
 
     public function postJson($uri, array $data = [], array $headers = [], $options = 0): TestResponse
@@ -45,8 +63,8 @@ trait MakesJsonApiRequests
     {
         return function ($attribute) {
             /** @var TestResponse $this */
-            $pointer = Str::of($attribute)->startWith('data')
-                ? "/{$attribute}" // This starts with data?
+            $pointer = Str::of($attribute)->startsWith('data')
+                ? "/".str_replace('.', '/', $attribute) // This starts with data?
                 : "/data/attributes/{$attribute}";
 
             try {

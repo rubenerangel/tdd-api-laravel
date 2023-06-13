@@ -26,17 +26,17 @@ class CreateArticleTest extends TestCase
         $this->withoutExceptionHandling();
 
         $response = $this->postJson(route('api.v1.articles.store'), [
-            'data' => [
-                'type' => 'articles',
-                'attributes' => [
+            // 'data' => [
+                // 'type' => 'articles',
+                // 'attributes' => [
                     'title' => 'New Article',
                     'slug' => 'new-article',
                     'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                ],
-            ],
-        ]);
+                // ],
+            // ],
+        ])->assertCreated();
 
-        $response->assertCreated();
+        // $response->assertCreated();
 
         $article = Article::first();
 
@@ -65,16 +65,17 @@ class CreateArticleTest extends TestCase
     {
         // $this->withoutExceptionHandling();
 
+        // $response = $this->postJson(route('api.v1.articles.store'), [
         $response = $this->postJson(route('api.v1.articles.store'), [
-            'data' => [
-                'type' => 'articles',
-                'attributes' => [
+            // 'data' => [
+                // 'type' => 'articles',
+                // 'attributes' => [
                     // 'title' => 'New article',
                     'slug' => 'new-article',
                     'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                ],
-            ],
-        ])->dump();
+                // ],
+            // ],
+        ])/* ->dump() */->assertJsonApiValidationErrors('title');
 
         // $response->assertJsonStructure([
         //     'errors' => [
@@ -87,7 +88,7 @@ class CreateArticleTest extends TestCase
         // )->assertStatus(422);
 
         // $response->assertJsonValidationErrors('data.attributes.title');
-        $response->assertJsonApiValidationErrors('title');
+        // $response->assertJsonApiValidationErrors('title');
     }
 
     /**
@@ -97,18 +98,19 @@ class CreateArticleTest extends TestCase
     {
         // $this->withoutExceptionHandling();
 
-        $response = $this->postJson(route('api.v1.articles.store'), [
-            'data' => [
-                'type' => 'articles',
-                'attributes' => [
+        // $response = $this->postJson(route('api.v1.articles.store'), [
+        $this->postJson(route('api.v1.articles.store'), [
+            // 'data' => [
+                // 'type' => 'articles',
+                // 'attributes' => [
                     'title' => 'New Article',
                     // 'slug' => 'new-article',
                     'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                ],
-            ],
-        ]);
+                // ],
+            // ],
+        ])->assertJsonApiValidationErrors('slug');
 
-        $response->assertJsonApiValidationErrors('slug');
+        // $response->assertJsonApiValidationErrors('slug');
     }
 
     /**
@@ -118,18 +120,19 @@ class CreateArticleTest extends TestCase
     {
         // $this->withoutExceptionHandling();
 
-        $response = $this->postJson(route('api.v1.articles.store'), [
-            'data' => [
-                'type' => 'articles',
-                'attributes' => [
+        // $response = $this->postJson(route('api.v1.articles.store'), [
+        $this->postJson(route('api.v1.articles.store'), [
+            // 'data' => [
+                // 'type' => 'articles',
+                // 'attributes' => [
                     'title' => 'New Article',
                     'slug' => 'new-article',
                     // 'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                ],
-            ],
-        ]);
+                // ],
+            // ],
+        ])->assertJsonApiValidationErrors('content');
 
-        $response->assertJsonApiValidationErrors('content');
+        // $response->assertJsonApiValidationErrors('content');
     }
 
      /**
@@ -139,17 +142,18 @@ class CreateArticleTest extends TestCase
     {
         // $this->withoutExceptionHandling();
 
-        $response = $this->postJson(route('api.v1.articles.store'), [
-            'data' => [
-                'type' => 'articles',
-                'attributes' => [
+        // $response = $this->postJson(route('api.v1.articles.store'), [
+        $this->postJson(route('api.v1.articles.store'), [
+            // 'data' => [
+                // 'type' => 'articles',
+                // 'attributes' => [
                     'title' => 'New',
                     'slug' => 'new-article',
                     'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                ],
-            ],
-        ]);
+                // ],
+            // ],
+        ])->assertJsonApiValidationErrors('title');
 
-        $response->assertJsonApiValidationErrors('title');
+        // $response->assertJsonApiValidationErrors('title');
     }
 }
