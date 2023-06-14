@@ -22,7 +22,7 @@ class UpdateArticleTest extends TestCase
             'title' => 'Update Article',
             'slug' => 'update-article',
             'content' => 'Update content.',
-        ])->assertOk();
+        ])/* ->dump() */->assertOk();
 
         $response->assertHeader('Location', route('api.v1.articles.show', $article));
 
@@ -31,14 +31,71 @@ class UpdateArticleTest extends TestCase
                 'type' => 'articles',
                 'id' => (string) $article->getRouteKey(),
                 'attributes' => [
-                    'title' => 'New Article',
-                    'slug' => 'new-article',
-                    'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                    'title' => 'Update Article',
+                    'slug' => 'update-article',
+                    'content' => 'Update content.',
                 ],
                 'links' => [
                     'self' => route('api.v1.articles.show', $article),
                 ],
             ],
         ]);
+    }
+
+    /**
+     * @test
+     */
+    public function title_is_required(): void
+    {
+        // $this->withoutExceptionHandling();
+        $article = Article::factory()->create();
+
+        $this->patchJson(route('api.v1.articles.update', $article), [
+            'slug' => 'update-article',
+            'content' => 'Update content.',
+        ])->assertJsonApiValidationErrors('title');
+    }
+
+    /**
+     * @test
+     */
+    public function slug_is_required(): void
+    {
+        // $this->withoutExceptionHandling();
+        $article = Article::factory()->create();
+
+        $this->patchJson(route('api.v1.articles.update', $article), [
+            'content' => 'Update content.',
+            'title' => 'Update Article',
+        ])->assertJsonApiValidationErrors('slug');
+    }
+
+    /**
+     * @test
+     */
+    public function content_is_required(): void
+    {
+        // $this->withoutExceptionHandling();
+        $article = Article::factory()->create();
+
+        $this->patchJson(route('api.v1.articles.update', $article), [
+            'title' => 'Update Article',
+            'slug' => 'update-article',
+        ])->assertJsonApiValidationErrors('content');
+    }
+
+     /**
+     * @test
+     */
+    public function title_must_be_at_least_4_caracters(): void
+    {
+        // $this->withoutExceptionHandling();
+        $article = Article::factory()->create();
+
+        $this->patchJson(route('api.v1.articles.update', $article), [
+            'title' => 'Upd',
+            'slug' => 'update-article',
+            'content' => 'Update content.',
+        ])->assertJsonApiValidationErrors('title');
     }
 }

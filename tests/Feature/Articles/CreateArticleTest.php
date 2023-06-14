@@ -66,7 +66,7 @@ class CreateArticleTest extends TestCase
         // $this->withoutExceptionHandling();
 
         // $response = $this->postJson(route('api.v1.articles.store'), [
-        $response = $this->postJson(route('api.v1.articles.store'), [
+        $this->postJson(route('api.v1.articles.store'), [
             // 'data' => [
                 // 'type' => 'articles',
                 // 'attributes' => [

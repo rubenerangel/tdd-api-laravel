@@ -35,8 +35,7 @@ trait MakesJsonApiRequests
         // Recived only the attributes that are needed to make the request
 
         if ($this->formatJsonApiDocument) {
-            $formattedData['data']['attributes'] = $data;
-            $formattedData['data']['type'] = (string)Str::of($uri)->after('api/v1/');
+            $formattedData = $this->getFormattedData($uri, $data);
         }
         // dd(Str::of($uri)->after('api/v1/'));
         // dd($formattedData);
@@ -96,5 +95,26 @@ trait MakesJsonApiRequests
                 'content-type', 'application/vnd.api+json'
             )->assertStatus(422);
         };
+    }
+
+    public function getFormattedData($uri, array $data)
+    {
+        $path = parse_url($uri)['path'];
+        $type = (string) Str::of($path)->after('api/v1/')->before('/');
+        $id = (string) Str::of($path)->after($type)->replace('/', '');
+        // $formattedData['data']['attributes'] = $data;
+        // $formattedData['data']['type'] = $type = (string)Str::of($uri)->after('api/v1/')->before('/');
+        // $formattedData['data']['type'] = $type = (string)Str::of($path)->after('api/v1/')->before('/');
+        // $formattedData['data']['id'] = $id = (string)Str::of($uri)->after($type.'/');
+        // $formattedData['data']['id'] = $id = (string)Str::of($path)->after($type)->replace('/', '');
+
+        return [
+            'data' => array_filter([
+                'type' => $type,
+                'id' => $id,
+                'attributes' => $data,
+            ])
+        ];
+        // dump(array_filter($formattedData['data']));
     }
 }

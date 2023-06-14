@@ -13,5 +13,5 @@ Route::get('articles/', [ArticleController::class, 'index'])
 Route::post('articles/', [ArticleController::class, 'store'])
     ->name('api.v1.articles.store');
 
-    Route::post('articles/', [ArticleController::class, 'store'])
-    ->name('api.v1.articles.store');
+Route::patch('articles/{article}', [ArticleController::class, 'update'])
+    ->name('api.v1.articles.update');
