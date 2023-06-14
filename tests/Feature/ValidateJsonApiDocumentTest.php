@@ -20,10 +20,10 @@ class ValidateJsonApiDocumentTest extends TestCase
         // $this->formatJsonApiDocument = false;
 
         Route::any('test_route', fn() => 'OK')
-            ->middleware([
+            ->middleware(
                 // ValidateJsonApiHeaders::class, // El orden si importa
                 ValidateJsonApiDocument::class,
-            ]);
+            );
     }
 
     /**
@@ -31,7 +31,7 @@ class ValidateJsonApiDocumentTest extends TestCase
      */
     public function only_accepts_valid_json_api_document(): void
     {
-        $this->withoutExceptionHandling();
+        // $this->withoutExceptionHandling();
 
         $this->postJson('test_route', [
             'data' => [

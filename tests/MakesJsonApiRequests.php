@@ -41,6 +41,7 @@ trait MakesJsonApiRequests
         // dd($formattedData);
 
         // return parent::json($method, $uri, $data, $headers, $options);
+        // return parent::json($method, $uri, $formattedData, $headers, $options);
         return parent::json($method, $uri, $formattedData ?? $data, $headers, $options);
     }
 

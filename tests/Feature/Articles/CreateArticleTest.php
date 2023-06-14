@@ -23,7 +23,7 @@ class CreateArticleTest extends TestCase
      */
     public function can_create_articles(): void
     {
-        $this->withoutExceptionHandling();
+        // $this->withoutExceptionHandling();
 
         $response = $this->postJson(route('api.v1.articles.store'), [
             // 'data' => [
@@ -108,6 +108,24 @@ class CreateArticleTest extends TestCase
                     'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
                 // ],
             // ],
+        ])->assertJsonApiValidationErrors('slug');
+
+        // $response->assertJsonApiValidationErrors('slug');
+    }
+
+    /**
+     * @test
+     */
+    public function slug_must_be_unique(): void
+    {
+        // $this->withoutExceptionHandling();
+        $article = Article::factory()->create();
+
+        // $response = $this->postJson(route('api.v1.articles.store'), [
+        $this->postJson(route('api.v1.articles.store'), [
+            'title' => 'New Article',
+            'slug' => $article->slug,
+            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
         ])->assertJsonApiValidationErrors('slug');
 
         // $response->assertJsonApiValidationErrors('slug');

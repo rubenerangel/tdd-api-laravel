@@ -32,7 +32,7 @@ class Handler extends ExceptionHandler
 
     protected function invalidJson($request, $exception): JsonApiValidationErrorResponse
     {
-        return new JsonApiValidationErrorResponse($exception, 422);
+        return new JsonApiValidationErrorResponse($exception);
         // $errors = [];
 
         // foreach($exception->errors() as $field => $messages) {

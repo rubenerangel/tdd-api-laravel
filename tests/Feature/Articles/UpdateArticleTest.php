@@ -20,11 +20,15 @@ class UpdateArticleTest extends TestCase
 
         $response = $this->patchJson(route('api.v1.articles.update', $article), [
             'title' => 'Update Article',
-            'slug' => 'update-article',
+            // 'slug' => 'update-article',
+            'slug' => $article->slug,
             'content' => 'Update content.',
         ])/* ->dump() */->assertOk();
 
-        $response->assertHeader('Location', route('api.v1.articles.show', $article));
+        $response->assertHeader(
+            'Location',
+            route('api.v1.articles.show', $article)
+        );
 
         $response->assertExactJson([
             'data' => [
@@ -32,7 +36,7 @@ class UpdateArticleTest extends TestCase
                 'id' => (string) $article->getRouteKey(),
                 'attributes' => [
                     'title' => 'Update Article',
-                    'slug' => 'update-article',
+                    'slug' => $article->slug,
                     'content' => 'Update content.',
                 ],
                 'links' => [
@@ -68,6 +72,27 @@ class UpdateArticleTest extends TestCase
             'content' => 'Update content.',
             'title' => 'Update Article',
         ])->assertJsonApiValidationErrors('slug');
+    }
+
+
+
+    /**
+     * @test
+     */
+    public function slug_must_be_unique(): void
+    {
+        // $this->withoutExceptionHandling();
+        $article1 = Article::factory()->create();
+        $article2 = Article::factory()->create();
+
+        // $response = $this->postJson(route('api.v1.articles.store'), [
+        $this->patchJson(route('api.v1.articles.update', $article1), [
+            'title' => 'New Article',
+            'slug' => $article2->slug,
+            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        ])->assertJsonApiValidationErrors('slug');
+
+        // $response->assertJsonApiValidationErrors('slug');
     }
 
     /**
