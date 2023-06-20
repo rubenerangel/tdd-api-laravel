@@ -3,20 +3,99 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Article;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\SaveArticleRequest;
 use App\Http\Resources\ArticleResource;
+use App\Http\Requests\SaveArticleRequest;
 use App\Http\Resources\ArticleCollection;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ArticleController extends Controller
 {
+    // public function index(Request $request): ArticleCollection
     public function index(): ArticleCollection
     {
-        // $articles = Article::all();
+        // $articles = Article::query();
 
-        return ArticleCollection::make(Article::all());
+        // if ($request->filled('sort')) {
+        //     // $sortFields = $request->input('sort');
+        //     // dd(explode(',', $sortField));
+        //     $sortFields = explode(',',$request->input('sort'));
+
+        //     $allowedSorts = ['title', 'content'];
+
+        //     foreach ($sortFields as $sortField) {
+        //         $sortDirection = Str::of( $sortField)->startsWith('-')
+        //             ? 'desc'
+        //             : 'asc';
+        //         $sortField = ltrim($sortField, '-');
+
+        //         // if (!in_array($sortField, $allowedSorts)) {
+        //         //     // throw HttpException
+        //         //     abort(400);
+        //         // }
+
+        //         abort_unless(in_array($sortField, $allowedSorts), 400);
+
+        //         $articles->orderBy($sortField, $sortDirection)->get();
+        //     }
+        // }
+
+        // $articles = Article::allowedSorts(['title', 'content']);
+        $articles = Article::query();
+
+        // filters
+        $allowedFilters = ['title', 'content', 'month', 'year'];
+        // $articles->where('content', 'LIKE', '%'.request('filter.content').'%');
+        foreach(request('filter', []) as $filter => $value) {
+            // El campo seria el $filter y el valor el $value
+
+            // dump($filter);
+            // dump($value);
+
+            abort_unless(in_array($filter, $allowedFilters), 400);
+
+            if ($filter === 'year') {
+                $articles->whereYear('created_at', $value);
+            } else if ($filter === 'month') {
+                $articles->whereMonth('created_at', $value);
+            } else {
+                $articles->where($filter, 'LIKE', '%'.$value.'%');
+            }
+
+        }
+
+        $articles->allowedSorts(['title', 'content']);
+
+        // $sortDirection = Str::of( $sortField)->startsWith('-')
+        //     ? 'desc'
+        //     : 'asc';
+        // $sortField = ltrim($sortField, '-');
+
+        // $articles = Article::all();
+        // $articles = Article::orderBy('title', 'asc')->get();
+        // $articles = Article::orderBy($sortField, 'asc')->get();
+
+        // $articles = Article::orderBy($sortField, $sortDirection)->get();
+
+        // return ArticleCollection::make(Article::all());
+        // return ArticleCollection::make($articles);
+
+        // dd(request('page.size'));
+
+        return ArticleCollection::make(
+            // $articles->get()
+            // $articles->paginate(
+            //     $perPage = request('page.size', 15),
+            //     $columns = ['*'],
+            //     $pageName = 'page[number]',
+            //     $page = request('page.number', 1)
+            // )->appends(request()->only('sort','page.size'))
+
+            $articles->jsonPaginate()
+        );
     }
 
     public function show(Article $article): ArticleResource

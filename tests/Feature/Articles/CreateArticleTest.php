@@ -34,7 +34,9 @@ class CreateArticleTest extends TestCase
                     'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
                 // ],
             // ],
-        ])->assertCreated();
+        ])
+            // ->dump()
+            ->assertCreated();
 
         // $response->assertCreated();
 
@@ -129,6 +131,89 @@ class CreateArticleTest extends TestCase
         ])->assertJsonApiValidationErrors('slug');
 
         // $response->assertJsonApiValidationErrors('slug');
+    }
+
+    /**
+     * @test
+     */
+    public function slug_must_only_contains_letters_numbers_and_dashes(): void
+    {
+        // $this->withoutExceptionHandling();
+
+        $this->postJson(route('api.v1.articles.store'), [
+            'title' => 'New Article',
+            'slug' => '$%^&*()',
+            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        ])->assertJsonApiValidationErrors('slug');
+    }
+
+    /**
+     * @test
+     */
+    public function slug_must_not_contain_uderscores(): void
+    {
+        // $this->withoutExceptionHandling();
+
+        $this->postJson(route('api.v1.articles.store'), [
+            'title' => 'New Article',
+            'slug' => 'with_underscores',
+            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        ])
+            // ->dump()
+            ->assertSee(
+                __(
+                    'validation.no_underscores',
+                    [
+                        'attribute' => 'data.attributes.slug'
+                    ]
+                )
+            )->assertJsonApiValidationErrors('slug');
+    }
+
+    /**
+     * @test
+     */
+    public function slug_must_not_start_with_dashes(): void
+    {
+        // $this->withoutExceptionHandling();
+
+        $this->postJson(route('api.v1.articles.store'), [
+            'title' => 'New Article',
+            'slug' => '-start-with-dashes',
+            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        ])
+        // ->dump()
+        ->assertSee(
+            __(
+                'validation.no_starting_with_dashes',
+                [
+                    'attribute' => 'data.attributes.slug'
+                ]
+            )
+        )->assertJsonApiValidationErrors('slug');
+    }
+
+    /**
+     * @test
+     */
+    public function slug_must_not_end_with_dashes(): void
+    {
+        // $this->withoutExceptionHandling();
+
+        $this->postJson(route('api.v1.articles.store'), [
+            'title' => 'New Article',
+            'slug' => 'end-with-dashes-',
+            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        ])
+        // ->dump()
+        ->assertSee(
+            __(
+                'validation.no_ending_with_dashes',
+                [
+                    'attribute' => 'data.attributes.slug'
+                ]
+            )
+        )->assertJsonApiValidationErrors('slug');
     }
 
     /**
