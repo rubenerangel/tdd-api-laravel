@@ -83,7 +83,7 @@ class CreateArticleTest extends TestCase
         //     'errors' => [
         //         ['title', 'detail', 'source' => ['pointer']]
         //     ]
-        //  ])->assertJson nt([
+        //  ])->assertJsonFragment([
         //     'source' => ['pointer' => '/data/attributes/title'],
         //  ])->assertHeader(
         //     'content-type', 'application/vnd.api+json'
@@ -238,7 +238,7 @@ class CreateArticleTest extends TestCase
         // $response->assertJsonApiValidationErrors('content');
     }
 
-     /**
+    /**
      * @test
      */
     public function title_must_be_at_least_4_caracters(): void

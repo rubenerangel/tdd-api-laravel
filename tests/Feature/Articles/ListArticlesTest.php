@@ -17,7 +17,7 @@ class ListArticlesTest extends TestCase
 
     public function can_fetch_a_single_article(): void
     {
-        $this->withoutExceptionHandling();
+        // $this->withoutExceptionHandling();
         $article = Article::factory()->create();
 
         // $response = $this->getJson('/api/v1/articles/'.$article->getRouteKey())->dump();
@@ -46,7 +46,7 @@ class ListArticlesTest extends TestCase
      */
     public function can_fetch_multiple_articles(): void
     {
-        $this->withoutExceptionHandling();
+        // $this->withoutExceptionHandling();
 
         $articles = Article::factory()->count(3)->create();
 
