@@ -44,30 +44,47 @@ class ArticleController extends Controller
         // }
 
         // $articles = Article::allowedSorts(['title', 'content']);
-        $articles = Article::query();
+        $articles = Article::query()
+            ->allowedFilters(['title', 'content', 'month', 'year'])
+            ->allowedSorts(['title', 'content'])
+            ->jsonPaginate();
 
         // filters
-        $allowedFilters = ['title', 'content', 'month', 'year'];
+        // $allowedFilters = ['title', 'content', 'month', 'year'];
         // $articles->where('content', 'LIKE', '%'.request('filter.content').'%');
-        foreach(request('filter', []) as $filter => $value) {
-            // El campo seria el $filter y el valor el $value
+        // foreach(request('filter', []) as $filter => $value) {
+        //     // El campo seri4a el $filter y el valor el $value
 
-            // dump($filter);
-            // dump($value);
+        //     // dump($filter);
+        //     // dump($value);
 
-            abort_unless(in_array($filter, $allowedFilters), 400);
+        //     abort_unless(in_array($filter, $allowedFilters), 400);
 
-            if ($filter === 'year') {
-                $articles->whereYear('created_at', $value);
-            } else if ($filter === 'month') {
-                $articles->whereMonth('created_at', $value);
-            } else {
-                $articles->where($filter, 'LIKE', '%'.$value.'%');
-            }
+        //     $articles->hasNamedScope($filter)
+        //         ? $articles->{$filter}($value)
+        //         : $articles->where($filter, 'LIKE', '%'.$value.'%');
 
-        }
+        //     // if ($filter === 'year') {
+        //     //     $articles->{$filter}($value);
+        //         // $articles->year($value);
+        //         // $articles->whereYear('created_at', $value);
+        //     // } else if ($filter === 'month') {
+        //         // $articles->{$filter}($value);
+        //         // $articles->month($value);
+        //         // $articles->whereMonth('created_at', $value);
+        //     // } else if ($filter === 'title') {
+        //         // $articles->{$filter}($value);
+        //         // $articles->title($value);
+        //         // $articles->where('title', 'LIKE', '%'.$value.'%');
+        //     // } else if ($filter === 'content') {
+        //         // $articles->{$filter}($value);
+        //         // $articles->content($value);
+        //         // $articles->where('content', 'LIKE', '%'.$value.'%');
+        //     // }
 
-        $articles->allowedSorts(['title', 'content']);
+        // }
+
+        // $articles->allowedSorts(['title', 'content']);
 
         // $sortDirection = Str::of( $sortField)->startsWith('-')
         //     ? 'desc'
@@ -94,7 +111,8 @@ class ArticleController extends Controller
             //     $page = request('page.number', 1)
             // )->appends(request()->only('sort','page.size'))
 
-            $articles->jsonPaginate()
+            // $articles->jsonPaginate()
+            $articles
         );
     }
 

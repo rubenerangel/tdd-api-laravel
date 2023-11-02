@@ -4,7 +4,6 @@ namespace Tests\Feature\Articles;
 
 use App\Models\Article;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class PaginateArticlesTest extends TestCase
@@ -71,7 +70,7 @@ class PaginateArticlesTest extends TestCase
     /**
      * @test
      */
-    public function can_paginate_and_sort_articles(): void
+    public function can_paginate_sorted_articles(): void
     {
         Article::factory()->create(['title' => 'C title']);
         Article::factory()->create(['title' => 'A title']);
@@ -111,6 +110,45 @@ class PaginateArticlesTest extends TestCase
         $this->assertStringContainsString('sort=title', $prevLink);
         // dd($nextLink);
         $this->assertStringContainsString('sort=title', $nextLink);
+
+        // dd($firstLink);
+    }
+
+    /**
+     * @test
+     */
+    public function can_paginate_filtered_articles(): void
+    {
+        Article::factory()->count(3)->create();
+        Article::factory()->create(['title' => 'C Laravel']);
+        Article::factory()->create(['title' => 'A Laravel']);
+        Article::factory()->create(['title' => 'B Laravel']);
+
+        // articles?filter=title=Laravel&page[size]=1&page[number]=2
+        $url = route('api.v1.articles.index', [
+            'filter[title]' => 'Laravel',
+            'page' => [
+                'size' => 1,
+                'number' =>2
+            ]
+        ]);
+
+        // dd(urldecode($url));
+
+        $response = $this->getJson($url);
+
+        $firstLink = urldecode($response->json('links.first'));
+        $lastLink  = urldecode($response->json('links.last'));
+        $prevLink  = urldecode($response->json('links.prev'));
+        $nextLink  = urldecode($response->json('links.next'));
+        // dd($firstLink);
+        $this->assertStringContainsString('filter[title]=Laravel', $firstLink);
+
+        $this->assertStringContainsString('filter[title]=Laravel', $lastLink);
+        // dd($prevLink);
+        $this->assertStringContainsString('filter[title]=Laravel', $prevLink);
+        // dd($nextLink);
+        $this->assertStringContainsString('filter[title]=Laravel', $nextLink);
 
         // dd($firstLink);
     }
