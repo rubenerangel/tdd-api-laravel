@@ -117,8 +117,14 @@ class ArticleController extends Controller
         );
     }
 
-    public function show(Article $article): ArticleResource
+    // public function show(Article $article): ArticleResource
+    public function show($article): ArticleResource
     {
+        // dd($article);
+        $article = Article::where('slug', $article)
+            ->sparseFieldset()
+            ->firstOrFail();
+
         return ArticleResource::make($article);
     }
 

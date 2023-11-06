@@ -131,7 +131,7 @@ class SortArticlesTest extends TestCase
     /**
      * @test
      */
-    public function cannot_sort_articles_by_unknown_fileds(): void
+    public function cannot_sort_articles_by_unknown_fields(): void
     {
         Article::factory()->count(3) ->create();
 

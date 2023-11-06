@@ -69,10 +69,21 @@ class JsonApiQueryBuilder
                 return $this;
             }
 
-            $fields = explode(',', request('fields.articles'));
+            $resourceType = $this->model->getTable();
+
+            if (property_exists($this->model, 'resourceType')) {
+                $resourceType = $this->model->resourceType;
+            }
+
+            // $fields = explode(',', request('fields.articles'));
+            $fields = explode(',', request('fields.' . $resourceType));
             // dd(request('fields'));
-            if(!in_array('slug', $fields)) {
-                $fields[] = 'slug';
+            // dd($this->model->getRouteKeyName());
+            $routeKeyName = $this->model->getRouteKeyName();
+            // if(!in_array('slug', $fields)) {
+            if(!in_array($routeKeyName, $fields)) {
+                // $fields[] = 'slug';
+                $fields[] = $routeKeyName;
             }
 
             return $this->addSelect($fields);
