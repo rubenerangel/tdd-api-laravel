@@ -42,7 +42,7 @@ class JsonApiTestResponse
                 );
             }
 
-            $this->assertHeader(
+            return $this->assertHeader(
                 'content-type', 'application/vnd.api+json'
             )->assertStatus(422);
         };
@@ -52,7 +52,7 @@ class JsonApiTestResponse
     {
         return function ($model, $attributes) {
             /** @var TestResponse $this */
-            $this->assertJson([
+            return $this->assertJson([
                 'data' => [
                     'type' => $model->getResourceType(),
                     'id' => (string)$model->getRouteKey(),
@@ -99,6 +99,8 @@ class JsonApiTestResponse
                     ]
                 ]);
             }
+
+            return $this;
         };
     }
 }

@@ -184,7 +184,7 @@ class UpdateArticleTest extends TestCase
         ])->assertJsonApiValidationErrors('content');
     }
 
-     /**
+    /**
      * @test
      */
     public function title_must_be_at_least_4_caracters(): void
