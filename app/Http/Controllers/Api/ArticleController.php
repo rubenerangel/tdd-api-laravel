@@ -3,19 +3,22 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Article;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
+// use Illuminate\Support\Str;
+// use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ArticleResource;
 use App\Http\Requests\SaveArticleRequest;
-use App\Http\Resources\ArticleCollection;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+// use App\Http\Resources\ArticleCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
+// use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ArticleController extends Controller
 {
     // public function index(Request $request): ArticleCollection
-    public function index(): ArticleCollection
+    // public function index(): ArticleCollection
+    public function index(): AnonymousResourceCollection
     {
         // $articles = Article::query();
 
@@ -103,7 +106,8 @@ class ArticleController extends Controller
 
         // dd(request('page.size'));
 
-        return ArticleCollection::make(
+        // return ArticleCollection::make(
+        return ArticleResource::collection(
             // $articles->get()
             // $articles->paginate(
             //     $perPage = request('page.size', 15),
@@ -118,7 +122,8 @@ class ArticleController extends Controller
     }
 
     // public function show(Article $article): ArticleResource
-    public function show($article): ArticleResource
+    // public function show($article): ArticleResource
+    public function show($article): JsonResource
     {
         // dd($article);
         $article = Article::where('slug', $article)
