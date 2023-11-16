@@ -3,6 +3,8 @@
 namespace Tests;
 
 use Closure;
+use App\Models\Category;
+use App\JsonApi\Document;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Assert as PHPUnit;
@@ -109,13 +111,26 @@ trait MakesJsonApiRequests
         // $formattedData['data']['id'] = $id = (string)Str::of($uri)->after($type.'/');
         // $formattedData['data']['id'] = $id = (string)Str::of($path)->after($type)->replace('/', '');
 
-        return [
-            'data' => array_filter([
-                'type' => $type,
-                'id' => $id,
-                'attributes' => $data,
-            ])
-        ];
+        // return [
+        //     'data' => array_filter([
+        //         'type' => $type,
+        //         'id' => $id,
+        //         'attributes' => $data,
+        //         'relationships' => [
+        //             'category'  => [
+        //                 'data' => [  // Resources Identify
+        //                     'id' => 'category-slug',
+        //                     'type' => 'categories',
+        //                 ]
+        //             ]
+        //         ]
+        //     ])
+        // ];
+
+        return Document::type($type)
+            ->id($id)
+            ->attributes($data)
+            ->toArray();
         // dump(array_filter($formattedData['data']));
     }
 }
