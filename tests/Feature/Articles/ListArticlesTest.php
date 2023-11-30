@@ -6,6 +6,7 @@ use App\Models\Article;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class ListArticlesTest extends TestCase
@@ -54,6 +55,9 @@ class ListArticlesTest extends TestCase
     public function can_fetch_all_articles(): void
     {
         // $this->withoutExceptionHandling();
+        // DB::listen(function ($query) {
+        //     dump($query->sql);
+        // });
 
         $articles = Article::factory()->count(3)->create();
 

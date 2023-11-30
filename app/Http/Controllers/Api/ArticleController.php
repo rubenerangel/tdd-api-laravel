@@ -48,6 +48,7 @@ class ArticleController extends Controller
 
         // $articles = Article::allowedSorts(['title', 'content']);
         $articles = Article::query()
+            ->with('category')
             ->allowedFilters(['title', 'content', 'month', 'year'])
             ->allowedSorts(['title', 'content'])
             ->sparseFieldset()
@@ -127,6 +128,7 @@ class ArticleController extends Controller
     {
         // dd($article);
         $article = Article::where('slug', $article)
+            ->with('category')
             ->sparseFieldset()
             ->firstOrFail();
 
