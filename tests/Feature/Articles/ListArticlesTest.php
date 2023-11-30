@@ -27,7 +27,7 @@ class ListArticlesTest extends TestCase
             'title'   => $article->title,
             'slug'    => $article->slug,
             'content' => $article->content,
-        ]);
+        ])/* ->dump() */;
 
         // $response->assertSee($article->title);
         // $response->assertExactJson([

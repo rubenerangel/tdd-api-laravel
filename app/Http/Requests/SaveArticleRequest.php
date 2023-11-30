@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use App\Rules\Slug;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Category;
 use Illuminate\Validation\Rule;
+use Illuminate\Foundation\Http\FormRequest;
 
 class SaveArticleRequest extends FormRequest
 {
@@ -35,11 +36,27 @@ class SaveArticleRequest extends FormRequest
                 Rule::unique('articles', 'slug')->ignore($this->route('article')),
             ],
             'data.attributes.content' => ['required',],
+            'data.relationships.category.data.id' => [
+                Rule::requiredIf(!$this->route('article')),
+                Rule::exists('categories', 'slug')
+                // 'exists:categories,slug',
+            ]
         ];
     }
 
     public function validated($key = "data.attributes", $default = null)
     {
-        return parent::validated()['data']['attributes'];
+        // dd(parent::validated());
+        $data = parent::validated()['data'];
+        $attributes = $data['attributes'];
+
+        if(isset($data['relationships'])) {
+            $relationships = $data['relationships'];
+            $categorySlug = $relationships['category']['data']['id'];
+            $category = Category::where('slug', $categorySlug)->first();
+            $attributes['category_id'] = $category->id;
+        }
+        // return parent::validated()['data']['attributes'];
+        return $attributes;
     }
 }

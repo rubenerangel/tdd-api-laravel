@@ -4,6 +4,7 @@ namespace Tests\Feature\Articles;
 
 use Tests\TestCase;
 use App\Models\Article;
+use App\Models\Category;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -24,6 +25,7 @@ class CreateArticleTest extends TestCase
     public function can_create_articles(): void
     {
         // $this->withoutExceptionHandling();
+        $category = Category::factory()->create();
 
         $response = $this->postJson(route('api.v1.articles.store'), [
             // 'data' => [
@@ -32,6 +34,9 @@ class CreateArticleTest extends TestCase
                     'title' => 'New Article',
                     'slug' => 'new-article',
                     'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                    '_relationships' => [
+                        'category' => $category
+                    ]
                 // ],
             // ],
         ])
@@ -42,22 +47,28 @@ class CreateArticleTest extends TestCase
 
         $article = Article::first();
 
-        $response->assertHeader('Location', route('api.v1.articles.show', $article));
-
-        $response->assertExactJson([
-            'data' => [
-                'type' => 'articles',
-                'id' => (string) $article->getRouteKey(),
-                'attributes' => [
-                    'title' => 'New Article',
-                    'slug' => 'new-article',
-                    'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                ],
-                'links' => [
-                    'self' => route('api.v1.articles.show', $article),
-                ],
-            ],
+        $response->assertJsonApiResource($article, [
+            'title' => 'New Article',
+            'slug' => 'new-article',
+            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
         ]);
+
+        // $response->assertHeader('Location', route('api.v1.articles.show', $article));
+
+        // $response->assertExactJson([
+        //     'data' => [
+        //         'type' => 'articles',
+        //         'id' => (string) $article->getRouteKey(),
+        //         'attributes' => [
+        //             'title' => 'New Article',
+        //             'slug' => 'new-article',
+        //             'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        //         ],
+        //         'links' => [
+        //             'self' => route('api.v1.articles.show', $article),
+        //         ],
+        //     ],
+        // ]);
     }
 
     /**
@@ -258,5 +269,35 @@ class CreateArticleTest extends TestCase
         ])->assertJsonApiValidationErrors('title');
 
         // $response->assertJsonApiValidationErrors('title');
+    }
+
+    /**
+     * @test
+     */
+    public function category_relationship_is_required(): void
+    {
+        // $this->withoutExceptionHandling();
+        $this->postJson(route('api.v1.articles.store'), [
+            'title' => 'New Article',
+            'slug' => 'new-article',
+            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        // ])->assertJsonApiValidationErrors('data.relationships.category.data.id');
+        ])->assertJsonApiValidationErrors('relationships.category');
+    }
+
+    /**
+     * @test
+     */
+    public function category_must_exist_in_database(): void
+    {
+        // $this->withoutExceptionHandling();
+        $this->postJson(route('api.v1.articles.store'), [
+            'title' => 'New Article',
+            'slug' => 'new-article',
+            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+            '_relationships' => [
+                'category' => Category::factory()->make()
+            ]
+        ])->assertJsonApiValidationErrors('data.relationships.category.data.id');
     }
 }
